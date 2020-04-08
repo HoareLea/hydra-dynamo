@@ -29,7 +29,7 @@ namespace Hydra.HydraHelperFunctions
         {
             InputData = data;
 
-            if(InputData.Count() != 7)
+            if(InputData.Count() != 8)
             {
                 MessageBox.Show("Incorrect input count.");
                 return;
@@ -46,16 +46,30 @@ namespace Hydra.HydraHelperFunctions
             }
 
             // Get nodeTextInput()
-            string fileName = InputData[0];
-            string fileDescription = InputData[1];
-            string versionNumber = InputData[2];
-            string changeLog = InputData[3];
-            string fileTags = InputData[4];
-            string targetFolder = InputData[5];
-            string thumbnailType = InputData[6];
+            string userName = InputData[0];
+            string fileName = InputData[1];
+            string fileDescription = InputData[2];
+            string versionNumber = InputData[3];
+            string changeLog = InputData[4];
+            string fileTags = InputData[5];
+            string targetFolder = InputData[6];
+            string thumbnailType = InputData[7];
+
+            //HL Updates START
+            
+            string githubDirectory = @"C:\TEMP";
+            string hydraDirectoryName = "ScriptsHydra";
+            if (!Directory.Exists(githubDirectory))
+                Directory.CreateDirectory(githubDirectory);
+
+            string hydraDirectory = Path.Combine(githubDirectory, hydraDirectoryName);
+            if (!Directory.Exists(hydraDirectory))
+                Directory.CreateDirectory(hydraDirectory);
+
+            //HL Updates END
 
             // define all file paths
-            string newFolderPath = (targetFolder + "\\" + fileName);
+            string newFolderPath = Path.Combine(hydraDirectory, "2-Examples_Dynamo", fileName);
             string dynamoSavePath = (newFolderPath + "\\" + "tempFolder" + "\\" + fileName + ".dyn");
             string tempFolder = (newFolderPath + "\\" + "tempFolder");
             string zipPath = (newFolderPath + "\\" + fileName + ".zip");
@@ -71,6 +85,18 @@ namespace Hydra.HydraHelperFunctions
 
             // TODO all these regions should be broken down to seperate functions
             // and called from within the export to Hydra function
+
+            //HL Updates START
+
+            Directory.SetCurrentDirectory(githubDirectory);
+            System.Diagnostics.Process cloneGit = System.Diagnostics.Process.Start("cmd.exe", "/c git lfs clone -X \"*\" https://github.com/HoareLea/ScriptsHydra");
+            cloneGit.WaitForExit();
+
+            Directory.SetCurrentDirectory(hydraDirectory);
+            System.Diagnostics.Process checkoutGit = System.Diagnostics.Process.Start("cmd.exe", "/C git checkout -b " + userName + "_" + fileName);
+            checkoutGit.WaitForExit();
+
+            //HL Updates END
 
             // Build all Hydra data
             List<string> fileTagsList = buildFileTags(fileTags);
@@ -176,6 +202,32 @@ namespace Hydra.HydraHelperFunctions
                     "\n\n Error: \n" + ex.ToString()
                     );
             }
+
+            //HL Updates START
+
+            Directory.SetCurrentDirectory(hydraDirectory);
+
+            string commit = "\"added " + fileName + "\"";
+            System.Diagnostics.Process addGit = System.Diagnostics.Process.Start("cmd.exe", "/C git add --all");
+            addGit.WaitForExit();
+
+            System.Diagnostics.Process commitGit = System.Diagnostics.Process.Start("cmd.exe", "/C git commit -m " + commit);
+            commitGit.WaitForExit();
+
+            System.Diagnostics.Process pushGit = System.Diagnostics.Process.Start("cmd.exe", "/C git push -u origin " + userName + "_" + fileName);
+            pushGit.WaitForExit();
+
+            //clean up temp folder
+            Directory.SetCurrentDirectory(githubDirectory);
+            System.Diagnostics.Process deleteTempDir = System.Diagnostics.Process.Start("cmd.exe", "/C rmdir /s /q " + githubDirectory + "\\BHydra");
+            deleteTempDir.WaitForExit();
+
+            //get url for pull request and open it in default browser
+            string pullRequestLink = "https://github.com/HoareLea/ScriptsHydra/compare/" + userName + "_" + fileName + "?expand=1";
+            System.Diagnostics.Process openPullRequest = System.Diagnostics.Process.Start("cmd.exe", "/C explorer \"" + pullRequestLink + "\"");
+            openPullRequest.WaitForExit();
+
+            //HL Updates END
 
             // Dialog confirming successful execution time
             MessageBox.Show("Hydra Executed " + String.Format("{0:f}", DateTime.Now));

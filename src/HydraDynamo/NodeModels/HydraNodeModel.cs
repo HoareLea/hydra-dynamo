@@ -38,12 +38,13 @@ namespace Hydra
     public class HydraNodeModel : NodeModel
     {
         #region Private Node Properties
-        private string fileName = "hydraExampleFile";
+        private string userName = "";
+        private string fileName = "ScriptHydraFileName";
         private string description = "This is an example description.";
         private string version = "2.0.0";
-        private string changeLog = "Notes:\n - New Node UI\n - Dynamo 2.0 Compliant";
-        private string fileTags = "hydra, dynamo, upload, example, share, sample";
-        private string targetFolder = @"C:\..\HydraCloneLocation";
+        private string changeLog = "Notes:\n - New Node UI\n - Dynamo 2.3 Compliant";
+        private string fileTags = "MEP, Physics, Security, Fire, Urban";
+        private string targetFolder = @"C:\TEMP";
         private string thumbnailType = "GeometryView";
 
         private bool graphThumbnail = false;
@@ -60,6 +61,17 @@ namespace Hydra
             {
                 fileName = value;
                 RaisePropertyChanged("NodeFileName");
+                OnNodeModified();
+            }
+        }
+
+        public string UserName
+        {
+            get { return userName; }
+            set
+            {
+                userName = value;
+                RaisePropertyChanged("NodeUserName");
                 OnNodeModified();
             }
         }
@@ -202,6 +214,7 @@ namespace Hydra
             // Wrap input data
             string[] data = new string[]
             {
+                this.UserName,
                 this.FileName,
                 this.Description,
                 this.Version,
