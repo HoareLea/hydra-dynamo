@@ -41,9 +41,9 @@ namespace Hydra
         private string userName = "";
         private string fileName = "ScriptHydraFileName";
         private string description = "This is an example description.";
-        private string version = "2.0.0";
+        private string version = "0.0.1";
         private string changeLog = "Notes:\n - New Node UI\n - Dynamo 2.3 Compliant";
-        private string fileTags = "MEP, Physics, Security, Fire, Urban";
+        private string fileTags = "MEP, Physics, Security, Fire, Urban, Revit, Dynamo";
         private string targetFolder = @"C:\TEMP";
         private string thumbnailType = "GeometryView";
 
