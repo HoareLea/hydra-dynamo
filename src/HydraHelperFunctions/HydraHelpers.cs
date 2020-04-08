@@ -145,7 +145,8 @@ namespace Hydra.HydraHelperFunctions
                 {
                     // Alert user the canvas contained unsaved changes
                     // If user proceeds imagery may not correspond with current dyn file
-                    MessageBox.Show("There are unsaved changes on the current canvas.  Please save and re=share to export the latest changes.");
+                    MessageBox.Show("Process Aborted. There are unsaved changes on the current canvas. Please save and reshare to export the latest changes.");
+                    return;
                 }
 
                 // Copy the last saved dyn file
@@ -207,7 +208,7 @@ namespace Hydra.HydraHelperFunctions
 
             Directory.SetCurrentDirectory(hydraDirectory);
 
-            string commit = "\"added " + fileName + "\"";
+            string commit = "\"added " + fileName + " " + now.ToString() + "\"";
             System.Diagnostics.Process addGit = System.Diagnostics.Process.Start("cmd.exe", "/C git add --all");
             addGit.WaitForExit();
 
